@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OffResq GPS Tracker - Map Visualization</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: 70px;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white !important;
+        }
+        
+        .container-main {
+            display: flex;
+            height: calc(100vh - 70px);
+        }
+        
+        .sidebar {
+            width: 400px;
+            background: white;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .sidebar-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .sidebar-header h5 {
+            margin: 0;
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-header .counter {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .data-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .location-item {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+        
+        .location-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+        
+        .location-item.emergency {
+            border-left-color: #f93e3e;
+            background-color: #fff5f5;
+        }
+        
+        .device-id {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+        
+        .device-id.emergency {
+            color: #f93e3e;
+        }
+        
+        .location-details {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .location-details div {
+            display: flex;
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; }
+        .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .navbar-brand { font-weight: bold; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .container-main { display: flex; height: calc(100vh - 70px); }
+        .sidebar { width: 350px; background: #fff; border-right: 1px solid #eee; display: flex; flex-direction: column; height: 100%; box-shadow: 2px 0 8px rgba(102,126,234,0.04); z-index: 10; }
+        .sidebar-header { padding: 20px 20px 10px 20px; border-bottom: 1px solid #eee; background: #f8f9fa; }
+        .sidebar-header h5 { margin: 0 0 5px 0; font-weight: 700; color: #667eea; }
+        .counter { background: #667eea; color: #fff; padding: 6px 12px; border-radius: 4px; font-weight: bold; display: inline-block; font-size: 0.95rem; }
+        .data-list { flex: 1; overflow-y: auto; padding: 10px 0 10px 0; }
+        .location-item { background: #f4f6fb; border-radius: 8px; margin: 10px 15px; padding: 12px 15px; box-shadow: 0 1px 4px rgba(102,126,234,0.07); cursor: pointer; transition: box-shadow 0.2s, background 0.2s; border-left: 5px solid #2ecc71; }
+        .location-item.emergency { border-left: 5px solid #e74c3c; background: #fff5f5; }
+        .location-item:hover { box-shadow: 0 2px 12px rgba(102,126,234,0.13); background: #eaf0fb; }
+        .device-id { font-weight: 600; color: #667eea; font-size: 1.1rem; margin-bottom: 2px; }
+        .device-id.emergency { color: #e74c3c; }
+        .location-details { display: flex; gap: 12px; font-size: 0.95rem; margin-bottom: 2px; }
+        .location-time { font-size: 0.8rem; color: #999; margin-top: 6px; border-top: 1px solid #eee; padding-top: 6px; }
+        .alert-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-top: 8px; }
+        .alert-badge.normal { background: #d4edda; color: #155724; }
+        .alert-badge.emergency { background: #f8d7da; color: #721c24; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .sidebar-controls { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 8px; background: #f8f9fa; }
+        .sidebar-controls button { flex: 1; padding: 8px; font-size: 0.95rem; border: none; border-radius: 4px; cursor: pointer; background: #667eea; color: white; transition: all 0.2s; }
+        .sidebar-controls button:hover { background: #764ba2; transform: scale(1.02); }
+        #map { flex: 1; border-radius: 0; z-index: 1; min-width: 0; }
+        .no-data { display: flex; align-items: center; justify-content: center; height: 100%; color: #999; text-align: center; flex-direction: column; }
+        .no-data-icon { font-size: 3rem; margin-bottom: 10px; opacity: 0.5; }
+        .leaflet-popup-content { font-size: 13px; }
+        .popup-title { font-weight: bold; color: #667eea; margin-bottom: 5px; }
+        @media (max-width: 900px) { .container-main { flex-direction: column; } .sidebar { width: 100%; height: 320px; border-right: none; border-bottom: 1px solid #eee; } #map { height: calc(100vh - 320px - 70px); } }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand">
+                <span style="font-size: 1.8rem;">📍</span> OffResq GPS Tracker
+            </span>
+            <span style="color: white; font-size: 0.9rem;">Real-time Location Monitoring</span>
+        </div>
+    </nav>
+    <!-- Main Container -->
+    <div class="container-main">
+        <!-- Sidebar - Data Feed -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h5>📊 Live Data Feed</h5>
+                <div class="counter"><span id="locationCount">0</span> locations</div>
+            </div>
+            <div class="data-list" id="dataList">
+                <div class="no-data">
+                    <div class="no-data-icon">📍</div>
+                    <p>Waiting for GPS data...</p>
+                </div>
+            </div>
+            <div class="sidebar-controls">
+                <button onclick="refreshLocations()">🔄 Refresh</button>
+                <button onclick="clearAllMarkers()">🗑️ Clear</button>
+            </div>
+        </div>
+        <!-- Map -->
+        <div id="map"></div>
+    </div>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([20, 0], 3);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19,
+            minZoom: 2
+        }).addTo(map);
+        // Store markers
+        let markers = {};
+        let locations = [];
+        // Create custom marker icon
+        function createMarkerIcon(color) {
+            return L.divIcon({
+                html: `<div style="background-color: ${color}; width: 35px; height: 35px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px;">📍</div>`,
+                iconSize: [35, 35],
+                className: 'custom-marker'
+            });
+        }
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleTimeString() + ' ' + date.toLocaleDateString();
+        }
+        // Load locations from server
+        async function loadLocations() {
+            try {
+                const response = await fetch('/api/locations');
+                locations = await response.json();
+                updateMapAndData();
+            } catch (error) {
+                console.error('Error loading locations:', error);
+            }
+        }
+        // Update map and sidebar
+        function updateMapAndData() {
+            // Clear existing markers
+            Object.values(markers).forEach(marker => map.removeLayer(marker));
+            markers = {};
+            // Update sidebar
+            const dataList = document.getElementById('dataList');
+            if (locations.length === 0) {
+                document.getElementById('locationCount').textContent = '0';
+                dataList.innerHTML = `<div class="no-data"><div class="no-data-icon">📍</div><p>Waiting for GPS data...</p></div>`;
+                return;
+            }
+            // Add markers and populate sidebar
+            dataList.innerHTML = '';
+            locations.forEach((location, index) => {
+                const color = location.alert === 1 ? '#e74c3c' : '#2ecc71';
+                const marker = L.marker([
+                    location.latitude, location.longitude
+                ], { icon: createMarkerIcon(color) }).addTo(map);
+                const popupContent = `
+                    <div class="popup-title">${location.deviceId}</div>
+                    <strong>Status:</strong> ${location.alert === 1 ? '🚨 EMERGENCY' : '✅ Normal'}<br>
+                    <strong>Lat:</strong> ${location.latitude.toFixed(6)}<br>
+                    <strong>Lon:</strong> ${location.longitude.toFixed(6)}<br>
+                    <strong>Signal:</strong> ${location.rssi} dBm<br>
+                    <small>${formatDate(location.createdAt)}</small>
+                `;
+                marker.bindPopup(popupContent);
+                marker.on('click', () => {
+                    dataList.scrollTop = dataList.children[index]?.offsetTop || 0;
+                });
+                markers[location.id] = marker;
+                // Add to sidebar
+                const alertClass = location.alert === 1 ? 'emergency' : '';
+                const alertBadge = location.alert === 1 
+                    ? '<span class="alert-badge emergency">🚨 EMERGENCY</span>'
+                    : '<span class="alert-badge normal">✅ NORMAL</span>';
+                const itemHtml = `
+                    <div class="location-item ${alertClass}" onclick="centerOnLocation(${location.latitude}, ${location.longitude})">
+                        <div class="device-id ${alertClass === 'emergency' ? 'emergency' : ''}">${location.deviceId}</div>
+                        <div class="location-details">
+                            <div><strong>Lat:</strong> <span>${location.latitude.toFixed(6)}</span></div>
+                            <div><strong>Lon:</strong> <span>${location.longitude.toFixed(6)}</span></div>
+                            <div><strong>Signal:</strong> <span>${location.rssi} dBm</span></div>
+                        </div>
+                        ${alertBadge}
+                        <div class="location-time">${formatDate(location.createdAt)}</div>
+                    </div>
+                `;
+                dataList.innerHTML += itemHtml;
+                // Center on first location
+                if (index === 0) {
+                    map.setView([location.latitude, location.longitude], 10);
+                }
+            });
+            // Update counter
+            document.getElementById('locationCount').textContent = locations.length;
+        }
+        // Center map on location
+        function centerOnLocation(lat, lon) {
+            map.setView([lat, lon], 13);
+        }
+        // Refresh locations
+        function refreshLocations() { loadLocations(); }
+        // Clear all markers
+        function clearAllMarkers() {
+            if (confirm('Delete all locations?')) {
+                fetch('/api/locations/clear', { method: 'DELETE' })
+                    .then(() => loadLocations())
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+        // Auto-refresh every 2 seconds
+        setInterval(loadLocations, 2000);
+        // Initial load
+        loadLocations();
+    </script>
+</body>
+</html>

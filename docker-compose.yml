@@ -1,0 +1,17 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: offresq-mysql
+    environment:
+      MYSQL_DATABASE: offresq
+      MYSQL_USER: offresq
+      MYSQL_PASSWORD: offresq
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    command: ["--default-authentication-plugin=mysql_native_password"]
+    volumes:
+      - offresq_mysql_data:/var/lib/mysql
+
+volumes:
+  offresq_mysql_data:
