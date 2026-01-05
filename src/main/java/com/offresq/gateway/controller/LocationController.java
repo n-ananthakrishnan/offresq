@@ -189,7 +189,7 @@ public class LocationController {
             deviceIds[i],
             locations[i][0],
             locations[i][1],
-            alerts[i] ? "EMERGENCY" : "NORMAL",
+            alerts[i] ? 1 : 0,
             -65 + i,
             System.currentTimeMillis()
         );
